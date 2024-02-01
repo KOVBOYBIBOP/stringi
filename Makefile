@@ -9,19 +9,20 @@ TESTS_OBJECTS = $(patsubst %.c,%.o, ${TESTS_SOURCE})
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S),Linux)
-    OPEN_CMD = xdg-open
-	ADD_LIB = -lcheck -lsubunit -lm -lrt -lpthread -D_GNU_SOURCE
-	BREW = .
-endif
-ifeq ($(UNAME_S),Darwin)
+	CHECKFLAGS= -lcheck
 	OPEN_CMD = open
-	ADD_LIB =
-	BREW := ${HOME}/homebrew
+	ADD_LIB = -lcheck -lm -lpthread -lrt -lsubunit
+	OS = LINUX
+endif
+ 
+ifeq ($(UNAME_S),Darwin)
+	CHECKFLAGS= $(shell pkg-config --cflags --libs check)
+	OPEN_CMD = open
 endif
 
-PATH := $(BREW)/bin:$(PATH)
+# PATH := $(BREW)/bin:$(PATH)
 
-all: clean s21_string.a test
+all: clean s21_string.a test gcov_report
 
 s21_string.a: ${SOURCE}
 	$(CC) $(CFLAGS) $(ADD_LIB) $(SOURCE)
@@ -33,17 +34,17 @@ test: ${TESTS_SOURCE} s21_string.a
 	${CC} $(LDFLAGS) -o test $^ $(ADD_LIB)
 	./test
 
-gcov_report: clean lcov ${SOURCE}
+gcov_report:
 	gcc --coverage ${SOURCE} test.c -o s21_test -lcheck -lsubunit -lm -lrt -lpthread -D_GNU_SOURCE
 	./s21_test
 	lcov -t "s21_test" -o s21_test.info -c -d .
 	genhtml -o report s21_test.info
 	$(OPEN_CMD) ./report/index.html
 
-lcov:
-ifeq ("", "$(shell PATH=$(PATH) which lcov)")
-	$(error Need to install lcov)
-endif
+# lcov:
+# ifeq ("", "$(shell PATH=$(PATH) which lcov)")
+# 	$(error Need to install lcov)
+# endif
 
 clean:
 	-rm -rf *.o && rm -rf *.gcno
@@ -53,4 +54,5 @@ clean:
 	-rm -rf ./report/
 	-rm -rf s21_test
 
-.PHONY: all clean check lcov
+rebuild:
+	clean all

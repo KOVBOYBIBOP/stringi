@@ -2,8 +2,35 @@
 #define S21_STRING_H
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <check.h>
 #define s21_NULL ((void *)0)
+#define BUFF_SIZE 512
 typedef unsigned long s21_size_t;
+
+typedef enum w_t { NONE_WIDTH,
+                       WIDTH_NUMBER,
+                       WIDTH_SUP } w_t;
+
+typedef enum l_t {
+    NONE_LENGTH,
+    LENGTH_SHORT,
+    LENGTH_LONG,
+    LENGTH_LONG_LONG,
+    LENGTH_DOUBLE,
+    LENGTH_LONG_DOUBLE
+} l_t;
+
+typedef struct format {
+    void *address;
+    w_t width;
+    unsigned int width_num;
+    l_t length;
+    char buff[512];
+    char specifier;
+    int precision;
+    int is_p_set;
+} format;
 
 int s21_strlen(const char *str);
 
@@ -26,5 +53,9 @@ void *s21_to_upper(char *str);
 void *s21_to_lower(char *str);
 char *s21_insert(char *src, char *str, size_t start_index);
 
+/* for sprintf*/
+int s21_isdigit(char c);
+int s21_atoi(const char* str);
+const char* getprecision(const char* form, format* format, va_list lst);
 
 #endif
