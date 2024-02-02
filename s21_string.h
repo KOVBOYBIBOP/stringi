@@ -54,8 +54,10 @@ void *s21_to_lower(char *str);
 char *s21_insert(char *src, char *str, size_t start_index);
 
 /* for sprintf*/
+int s21_sprintf(char* str, const char* form, ...);
 int s21_isdigit(char c);
 int s21_atoi(const char* str);
 const char* getprecision(const char* form, format* format, va_list lst);
+const char* getwidth(const char* form, format* format, va_list ap);
 
 #endif

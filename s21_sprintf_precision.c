@@ -1,5 +1,27 @@
 #include "s21_string.h"
 
+int s21_sprintf(char* str, const char* form, ...) {
+  format format = {0};
+  va_list ap;
+  va_start(ap, form);
+  char* str_start = str;
+}
+
+const char* getwidth(const char* form, format* format, va_list ap) {
+  if (*form == '*') {
+    form++;
+    format->width = va_arg(ap, int);
+  } else if (s21_isdigit(*form)) {
+    char tmp[BUFF_SIZE] = {'\0'};
+    for (int i = 0; s21_isdigit(*form); i++, form++) {
+      tmp[i] = *form;
+    }
+    format->width = s21_atoi(tmp);
+  }
+  return format;
+}
+
+
 int s21_isdigit(char c) { return (c >= '0' && c <= '9'); }
 
 int s21_atoi(const char* str) {
