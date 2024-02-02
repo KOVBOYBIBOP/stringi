@@ -18,7 +18,7 @@ const char* getwidth(const char* form, format* format, va_list ap) {
     }
     format->width = s21_atoi(tmp);
   }
-  return format;
+  return form;
 }
 
 
